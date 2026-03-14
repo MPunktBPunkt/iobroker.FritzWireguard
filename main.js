@@ -214,24 +214,54 @@ class FritzWireguard extends Adapter {
 
     // States
     async _initStates() {
-        for (const [id, type, def, name, role] of [
-            ['info.connection',          'boolean', false, 'Adapter verbunden',      'indicator.connected'],
-            ['info.lastUpdate',          'string',  '',    'Letzte Aktualisierung',  ''],
-            ['wireguard.status',         'string',  '',    'WireGuard Status',       'indicator.connected'],
-            ['wireguard.handshake',      'string',  '',    'Letzter Handshake',      ''],
-            ['wireguard.rxBytes',        'number',  0,     'Empfangene Bytes',       ''],
-            ['wireguard.txBytes',        'number',  0,     'Gesendete Bytes',        ''],
-            ['fritzbox.externalIP',      'string',  '',    'Externe IP',             ''],
-            ['fritzbox.uptime',          'number',  0,     'Uptime (Sekunden)',       ''],
-            ['fritzbox.connectionType',  'string',  '',    'Verbindungstyp',         ''],
-            ['fritzbox.modelName',       'string',  '',    'FritzBox Modell',        ''],
-            ['fritzbox.firmwareVersion', 'string',  '',    'Firmware-Version',       ''],
+        // Parent-Channels zuerst anlegen (adapter-core v3 benoetigt das)
+        for (const [chId, chName] of [
+            ['info',      'Adapter-Info'],
+            ['wireguard', 'WireGuard'],
+            ['fritzbox',  'FritzBox'],
         ]) {
-            await this.setObjectNotExistsAsync(id, {
-                type: 'state',
-                common: { name, type, role: role || 'value', read: true, write: false, def },
-                native: {}
-            });
+            try {
+                await this.extendObjectAsync(chId, {
+                    type:   'channel',
+                    common: { name: chName },
+                    native: {}
+                });
+            } catch (e) {
+                this.log.warn('Channel ' + chId + ': ' + e.message);
+            }
+        }
+
+        // States anlegen/aktualisieren
+        // extendObjectAsync ist zuverlaessiger als setObjectNotExistsAsync in adapter-core v3
+        for (const [id, stateType, defVal, stName, role] of [
+            ['info.connection',          'boolean', false, 'Adapter verbunden',      'indicator.connected'],
+            ['info.lastUpdate',          'string',  '',    'Letzte Aktualisierung',  'date'],
+            ['wireguard.status',         'string',  '',    'WireGuard Status',       'text'],
+            ['wireguard.handshake',      'string',  '',    'Letzter Handshake',      'date'],
+            ['wireguard.rxBytes',        'number',  0,     'Empfangene Bytes',       'value'],
+            ['wireguard.txBytes',        'number',  0,     'Gesendete Bytes',        'value'],
+            ['fritzbox.externalIP',      'string',  '',    'Externe IP',             'text'],
+            ['fritzbox.uptime',          'number',  0,     'Uptime (Sekunden)',      'value'],
+            ['fritzbox.connectionType',  'string',  '',    'Verbindungstyp',         'text'],
+            ['fritzbox.modelName',       'string',  '',    'FritzBox Modell',        'text'],
+            ['fritzbox.firmwareVersion', 'string',  '',    'Firmware-Version',       'text'],
+        ]) {
+            try {
+                await this.extendObjectAsync(id, {
+                    type:   'state',
+                    common: {
+                        name:  stName,
+                        type:  stateType,
+                        role:  role,
+                        read:  true,
+                        write: false,
+                        def:   defVal
+                    },
+                    native: {}
+                });
+            } catch (e) {
+                this.log.warn('State ' + id + ': ' + e.message);
+            }
         }
     }
 
@@ -343,15 +373,30 @@ class FritzWireguard extends Adapter {
 
             for (const dev of devices) {
                 const pre = 'devices.' + dev.mac.replace(/:/g, '_');
-                for (const [k, t, v] of [
-                    ['name','string',dev.name], ['ip','string',dev.ip],
-                    ['mac','string',dev.mac], ['active','boolean',dev.active],
-                    ['iface','string',dev.iface]
-                ]) {
-                    await this.setObjectNotExistsAsync(pre + '.' + k, {
-                        type: 'state', common: { name: k, type: t, role: 'value', read: true, write: false }, native: {}
+                // Device-Channel anlegen
+                try {
+                    await this.extendObjectAsync('devices', {
+                        type: 'folder', common: { name: 'Netzwerkgeraete' }, native: {}
                     });
-                    await this.setStateAsync(pre + '.' + k, { val: v, ack: true });
+                    await this.extendObjectAsync(pre, {
+                        type: 'channel', common: { name: dev.name || dev.mac }, native: {}
+                    });
+                } catch (_) {}
+                for (const [k, t, v, rl] of [
+                    ['name',   'string',  dev.name,   'text'],
+                    ['ip',     'string',  dev.ip,     'text'],
+                    ['mac',    'string',  dev.mac,    'text'],
+                    ['active', 'boolean', dev.active, 'indicator'],
+                    ['iface',  'string',  dev.iface,  'text']
+                ]) {
+                    try {
+                        await this.extendObjectAsync(pre + '.' + k, {
+                            type: 'state',
+                            common: { name: k, type: t, role: rl, read: true, write: false },
+                            native: {}
+                        });
+                        await this.setStateAsync(pre + '.' + k, { val: v, ack: true });
+                    } catch (_) {}
                 }
             }
 

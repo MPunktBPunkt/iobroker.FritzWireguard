@@ -5,12 +5,46 @@
       "type": "panel",
       "label": "Verbindung",
       "items": {
-        "fritzHost":    { "type": "text",     "label": "FritzBox IP (im VPN-Netz)",          "default": "192.168.178.1", "sm": 12, "md": 6 },
-        "fritzPort":    { "type": "number",   "label": "TR-064 Port",                         "default": 49000,           "sm": 12, "md": 6 },
-        "fritzUser":    { "type": "text",     "label": "FritzBox Benutzername",               "sm": 12, "md": 6 },
-        "fritzPass":    { "type": "password", "label": "FritzBox Passwort",                   "sm": 12, "md": 6 },
-        "webPort":      { "type": "number",   "label": "Web-UI Port",                         "default": 8094,            "sm": 12, "md": 6 },
-        "pollInterval": { "type": "number",   "label": "Poll-Intervall (Sekunden, min. 30)",  "default": 60,              "sm": 12, "md": 6 }
+        "fritzHost": {
+          "type": "text",
+          "label": "FritzBox IP (im VPN-Netz)",
+          "default": "192.168.178.1",
+          "sm": 12,
+          "md": 6
+        },
+        "fritzPort": {
+          "type": "number",
+          "label": "TR-064 Port",
+          "default": 49000,
+          "sm": 12,
+          "md": 6
+        },
+        "fritzUser": {
+          "type": "text",
+          "label": "FritzBox Benutzername",
+          "sm": 12,
+          "md": 6
+        },
+        "fritzPass": {
+          "type": "password",
+          "label": "FritzBox Passwort",
+          "sm": 12,
+          "md": 6
+        },
+        "webPort": {
+          "type": "number",
+          "label": "Web-UI Port",
+          "default": 8094,
+          "sm": 12,
+          "md": 6
+        },
+        "pollInterval": {
+          "type": "number",
+          "label": "Poll-Intervall (Sekunden, min. 30)",
+          "default": 60,
+          "sm": 12,
+          "md": 6
+        }
       }
     },
     "wireguard": {
@@ -18,13 +52,31 @@
       "label": "WireGuard",
       "items": {
         "wgConfig": {
-          "type": "text", "label": "WireGuard Config (.conf Inhalt)",
-          "multiline": true, "trim": false, "sm": 12,
-          "help": "DNS-Zeilen und 0.0.0.0/0 werden automatisch entfernt. Nur das Zielnetz (z.\u00a0B. 192.168.178.0/24) wird durch den Tunnel geleitet."
+          "type": "text",
+          "label": "WireGuard Config (.conf Inhalt)",
+          "multiline": true,
+          "trim": false,
+          "sm": 12,
+          "help": "DNS-Zeilen und 0.0.0.0/0 werden automatisch entfernt. Nur das Zielnetz (z. B. 192.168.178.0/24) wird durch den Tunnel geleitet."
         },
-        "autoConnect":        { "type": "checkbox", "label": "Beim Start automatisch verbinden",           "default": true, "sm": 12 },
-        "autoReconnect":      { "type": "checkbox", "label": "Bei Verbindungsabbruch neu verbinden",       "default": true, "sm": 12 },
-        "wgDisconnectOnStop": { "type": "checkbox", "label": "WireGuard beim Adapter-Stopp trennen",       "default": true, "sm": 12 }
+        "autoConnect": {
+          "type": "checkbox",
+          "label": "Beim Start automatisch verbinden",
+          "default": true,
+          "sm": 12
+        },
+        "autoReconnect": {
+          "type": "checkbox",
+          "label": "Bei Verbindungsabbruch neu verbinden",
+          "default": true,
+          "sm": 12
+        },
+        "wgDisconnectOnStop": {
+          "type": "checkbox",
+          "label": "WireGuard beim Adapter-Stopp trennen",
+          "default": true,
+          "sm": 12
+        }
       }
     },
     "tunnels": {
@@ -33,19 +85,40 @@
       "items": {
         "tunnels": {
           "type": "table",
-          "label": "TCP Port-Weiterleitungen (127.0.0.1:lokal \u2192 Remote-IP:Port \u00fcber VPN)",
+          "label": "TCP Port-Weiterleitungen (127.0.0.1:lokal → Remote-IP:Port über VPN)",
           "sm": 12,
-          "objKeyName": "id",
           "items": {
-            "name":       { "type": "text",     "label": "Name",                        "width": "20%" },
-            "localPort":  { "type": "number",   "label": "Lokaler Port",                "width": "14%",
-                            "help": "Port auf 127.0.0.1 den andere Adapter nutzen" },
-            "remoteHost": { "type": "text",     "label": "Ziel-IP (entferntes Netz)",   "width": "26%",
-                            "help": "z.\u00a0B. 192.168.178.55" },
-            "remotePort": { "type": "number",   "label": "Ziel-Port",                   "width": "14%",
-                            "help": "z.\u00a0B. 80 (HTTP) oder 502 (Modbus)" },
-            "enabled":    { "type": "checkbox", "label": "Aktiv",                       "width": "10%", "default": true }
-          }
+            "name": {
+              "type": "text",
+              "label": "Name",
+              "width": "20%"
+            },
+            "localPort": {
+              "type": "number",
+              "label": "Lokaler Port",
+              "width": "14%",
+              "help": "Port auf 127.0.0.1 den andere Adapter nutzen"
+            },
+            "remoteHost": {
+              "type": "text",
+              "label": "Ziel-IP (entferntes Netz)",
+              "width": "26%",
+              "help": "z. B. 192.168.178.55"
+            },
+            "remotePort": {
+              "type": "number",
+              "label": "Ziel-Port",
+              "width": "14%",
+              "help": "z. B. 80 (HTTP) oder 502 (Modbus)"
+            },
+            "enabled": {
+              "type": "checkbox",
+              "label": "Aktiv",
+              "width": "10%",
+              "default": true
+            }
+          },
+          "noDelete": false
         }
       }
     },
@@ -53,7 +126,13 @@
       "type": "panel",
       "label": "Erweitert",
       "items": {
-        "logBuffer": { "type": "number", "label": "Log-Puffer (max. Eintr\u00e4ge)", "default": 500, "sm": 12, "md": 6 }
+        "logBuffer": {
+          "type": "number",
+          "label": "Log-Puffer (max. Einträge)",
+          "default": 500,
+          "sm": 12,
+          "md": 6
+        }
       }
     }
   }

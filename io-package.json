@@ -3,15 +3,19 @@
     "name": "fritzwireguard",
     "version": "0.2.0",
     "news": {
+      "0.2.0": {
+        "en": "TCP Tunnel Manager for selective adapter routing through VPN; WireGuard config sanitizer",
+        "de": "TCP Tunnel Manager fuer selektives Adapter-Routing durch VPN; WireGuard Config-Sanitizer"
+      },
       "0.1.0": {
         "en": "Initial release",
-        "de": "Erstveröffentlichung"
+        "de": "Erstveroeffentlichung"
       }
     },
     "title": "FritzWireguard",
     "titleLang": {
-      "de": "FritzWireguard — WireGuard VPN zu FritzBox",
-      "en": "FritzWireguard — WireGuard VPN to FritzBox"
+      "de": "FritzWireguard - WireGuard VPN zu FritzBox",
+      "en": "FritzWireguard - WireGuard VPN to FritzBox"
     },
     "desc": {
       "de": "Stellt per WireGuard VPN eine Verbindung zu einer entfernten FritzBox her und liest Geräte, WAN-Status und weitere Daten via TR-064 aus.",
@@ -32,7 +36,7 @@
     "main": "main.js",
     "icon": "admin/fritzwireguard.svg",
     "enabled": true,
-    "extIcon": "admin/fritzwireguard.svg",
+    "extIcon": "https://raw.githubusercontent.com/MPunktBPunkt/iobroker.fritzwireguard/main/admin/fritzwireguard.svg",
     "readme": "https://github.com/MPunktBPunkt/iobroker.fritzwireguard/blob/main/README.md",
     "loglevel": "info",
     "mode": "daemon",
@@ -84,6 +88,30 @@
         "read": true,
         "write": false,
         "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "wireguard",
+      "type": "channel",
+      "common": {
+        "name": "WireGuard"
+      },
+      "native": {}
+    },
+    {
+      "_id": "fritzbox",
+      "type": "channel",
+      "common": {
+        "name": "FritzBox"
+      },
+      "native": {}
+    },
+    {
+      "_id": "devices",
+      "type": "folder",
+      "common": {
+        "name": "Netzwerkgeraete"
       },
       "native": {}
     }
