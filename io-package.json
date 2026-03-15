@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "fritzwireguard",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "news": {
+      "0.2.5": {
+        "en": "Bugfix: NO_ERROR termination - onReady error keeps process alive and logs full stack trace",
+        "de": "Bugfix: NO_ERROR Beendigung - Fehler in onReady haelt Prozess am Leben und loggt vollen Stack-Trace"
+      },
       "0.2.4": {
         "en": "Bugfix: 'textarea' is not a valid ioBroker jsonConfig type - replaced with 'text'",
         "de": "Bugfix: 'textarea' ist kein gueltiger ioBroker jsonConfig Typ - ersetzt durch 'text'"

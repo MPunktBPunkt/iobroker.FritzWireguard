@@ -488,7 +488,7 @@ class FritzWireguard extends Adapter {
 
     _json(res, obj) { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); }
 
-    _version() { try { return require('./package.json').version; } catch (_) { return '0.2.4'; } }
+    _version() { try { return require('./package.json').version; } catch (_) { return '0.2.5'; } }
 
     // ── Web-UI ────────────────────────────────────────────────────────────────
     _buildUI() {
@@ -710,8 +710,17 @@ class FritzWireguard extends Adapter {
 
             const iv = Math.max(30, parseInt(this.config.pollInterval) || 60);
             this._pollTimer = setInterval(() => this._poll(), iv * 1000);
+            this._log('SYSTEM', 'SYSTEM', 'FritzWireguard bereit. Poll-Intervall: ' + iv + 's');
         } catch (e) {
-            this._log('ERROR', 'SYSTEM', 'Kritischer Fehler in onReady: ' + e.message);
+            // Fehler loggen aber Adapter NICHT beenden - sonst NO_ERROR termination
+            console.error('[FRITZWIREGUARD] Kritischer Fehler in onReady:', e);
+            const l = this.log;
+            if (l) l.error('[SYSTEM] Kritischer Fehler in onReady: ' + e.message + ' | Stack: ' + e.stack);
+            // Sicherstellen dass Poll-Timer laeuft damit Prozess am Leben bleibt
+            if (!this._pollTimer) {
+                const iv = Math.max(30, parseInt((this.config && this.config.pollInterval)) || 60);
+                this._pollTimer = setInterval(() => this._poll(), iv * 1000);
+            }
         }
     }
     onStateChange(id, state) {
