@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "fritzwireguard",
-    "version": "0.2.11",
+    "version": "0.2.12",
     "news": {
+      "0.2.12": {
+        "en": "Fix: module.parent export pattern (proven in other adapters); debug in constructor; factory debug",
+        "de": "Fix: module.parent Export-Pattern (bewaehrt in anderen Adaptern); Debug im Konstruktor; Factory-Debug"
+      },
       "0.2.11": {
         "en": "Debug: file-based logging to /tmp/fritzwireguard-debug.log; removed process.exit(1) from uncaughtException",
         "de": "Debug: dateibasiertes Logging nach /tmp/fritzwireguard-debug.log; process.exit(1) aus uncaughtException entfernt"

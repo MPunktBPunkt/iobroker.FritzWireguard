@@ -212,7 +212,9 @@ class TunnelManager {
 class FritzWireguard extends utils.Adapter {
 
     constructor(options = {}) {
+        _dbg('constructor() aufgerufen, options keys: ' + Object.keys(options || {}).join(','));
         super({ ...options, name: 'fritzwireguard' });
+        _dbg('super() erfolgreich');
         this._server    = null;
         this._logBuffer = [];
         this._pollTimer = null;
@@ -509,7 +511,7 @@ class FritzWireguard extends utils.Adapter {
 
     _json(res, obj) { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); }
 
-    _version() { try { return require('./package.json').version; } catch (_) { return '0.2.11'; } }
+    _version() { try { return require('./package.json').version; } catch (_) { return '0.2.12'; } }
 
     // ── Web-UI ────────────────────────────────────────────────────────────────
     _buildUI() {
@@ -786,10 +788,14 @@ class FritzWireguard extends utils.Adapter {
     }
 }
 
-// adapter-core v3: startAdapter statt direktem new
-if (require.main !== module) {
-    module.exports = options => new FritzWireguard(options);
+// Bewaehrtes Export-Pattern (module.parent) wie in freeair100, kostalpiko etc.
+if (module.parent) {
+    _dbg('Als Modul geladen - exportiere Factory');
+    module.exports = options => {
+        _dbg('Factory aufgerufen von ioBroker');
+        return new FritzWireguard(options);
+    };
 } else {
-    console.log('[FRITZWIREGUARD] Starte als Hauptmodul...');
+    _dbg('Als Hauptmodul gestartet');
     new FritzWireguard();
 }
