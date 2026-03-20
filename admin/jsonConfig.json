@@ -85,34 +85,38 @@
           "type": "table",
           "label": "TCP Port-Weiterleitungen (127.0.0.1:lokal -> Remote-IP:Port ueber VPN)",
           "sm": 12,
-          "items": {
-            "name": {
+          "items": [
+            {
+              "attr": "name",
               "type": "text",
-              "label": "Name",
+              "title": "Name",
               "width": "22%"
             },
-            "localPort": {
+            {
+              "attr": "localPort",
               "type": "number",
-              "label": "Lokaler Port",
+              "title": "Lokaler Port",
               "width": "15%"
             },
-            "remoteHost": {
+            {
+              "attr": "remoteHost",
               "type": "text",
-              "label": "Ziel-IP",
+              "title": "Ziel-IP",
               "width": "28%"
             },
-            "remotePort": {
+            {
+              "attr": "remotePort",
               "type": "number",
-              "label": "Ziel-Port",
+              "title": "Ziel-Port",
               "width": "15%"
             },
-            "enabled": {
+            {
+              "attr": "enabled",
               "type": "checkbox",
-              "label": "Aktiv",
-              "default": true,
+              "title": "Aktiv",
               "width": "10%"
             }
-          }
+          ]
         }
       }
     },
