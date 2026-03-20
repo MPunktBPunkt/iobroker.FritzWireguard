@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "fritzwireguard",
-    "version": "0.2.10",
+    "version": "0.2.11",
     "news": {
+      "0.2.11": {
+        "en": "Debug: file-based logging to /tmp/fritzwireguard-debug.log; removed process.exit(1) from uncaughtException",
+        "de": "Debug: dateibasiertes Logging nach /tmp/fritzwireguard-debug.log; process.exit(1) aus uncaughtException entfernt"
+      },
       "0.2.10": {
         "en": "Root fix: onUnload calls callback() immediately and synchronously - wg-quick down runs fire-and-forget after callback",
         "de": "Root-Fix: onUnload ruft callback() sofort und synchron auf - wg-quick down laeuft fire-and-forget nach callback"

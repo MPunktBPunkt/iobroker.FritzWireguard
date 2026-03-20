@@ -1,16 +1,23 @@
 'use strict';
 
-console.log('[FRITZWIREGUARD] main.js wird geladen...');
+// File-basiertes Debug-Logging (sichtbar unabhaengig von ioBroker)
+const _fs0 = require('fs');
+const _dbg = (msg) => {
+    try { _fs0.appendFileSync('/tmp/fritzwireguard-debug.log',
+        new Date().toISOString() + ' ' + msg + '\n'); } catch(_) {}
+};
+_dbg('=== main.js geladen ===');
+
 process.on('uncaughtException', function(e) {
-    console.error('[FRITZWIREGUARD] uncaughtException:', e.message, e.stack);
-    process.exit(1);
+    _dbg('uncaughtException: ' + e.message + '\n' + e.stack);
+    // NICHT process.exit() aufrufen - adapter-core soll selbst entscheiden
 });
-process.on('unhandledRejection', function(reason) {
-    console.error('[FRITZWIREGUARD] unhandledRejection:', reason);
+process.on('unhandledRejection', function(reason, promise) {
+    _dbg('unhandledRejection: ' + (reason && reason.stack ? reason.stack : String(reason)));
 });
 
 const utils = require('@iobroker/adapter-core');
-console.log('[FRITZWIREGUARD] adapter-core geladen, utils.Adapter:', typeof utils.Adapter);
+_dbg('utils.Adapter type: ' + typeof utils.Adapter);
 const http        = require('http');
 const net         = require('net');
 const url         = require('url');
@@ -502,7 +509,7 @@ class FritzWireguard extends utils.Adapter {
 
     _json(res, obj) { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); }
 
-    _version() { try { return require('./package.json').version; } catch (_) { return '0.2.10'; } }
+    _version() { try { return require('./package.json').version; } catch (_) { return '0.2.11'; } }
 
     // ── Web-UI ────────────────────────────────────────────────────────────────
     _buildUI() {
@@ -712,6 +719,7 @@ class FritzWireguard extends utils.Adapter {
     // Lifecycle
     async onReady() {
         try {
+            _dbg('onReady() gestartet, config: ' + JSON.stringify({webPort: this.config && this.config.webPort, autoConnect: this.config && this.config.autoConnect}));
             this._log('SYSTEM', 'SYSTEM', 'FritzWireguard v' + this._version() + ' startet \u2026');
             await this._initStates();
 
@@ -727,6 +735,7 @@ class FritzWireguard extends utils.Adapter {
             this._log('SYSTEM', 'SYSTEM', 'FritzWireguard bereit. Poll-Intervall: ' + iv + 's');
         } catch (e) {
             // Fehler loggen aber Adapter NICHT beenden - sonst NO_ERROR termination
+            _dbg('FEHLER in onReady: ' + e.message + '\n' + e.stack);
             console.error('[FRITZWIREGUARD] Kritischer Fehler in onReady:', e);
             const l = this.log;
             if (l) l.error('[SYSTEM] Kritischer Fehler in onReady: ' + e.message + ' | Stack: ' + e.stack);
@@ -742,6 +751,7 @@ class FritzWireguard extends utils.Adapter {
     }
 
     onUnload(callback) {
+        _dbg('onUnload() aufgerufen');
         // callback SOFORT aufrufen - kein async, kein warten
         // ioBroker hat sehr kurzen Timeout (< 1s bei force-stop)
         // Alles synchron + fire-and-forget
